@@ -71,12 +71,24 @@ class TestAgentSystem:
 def test_basic_functionality():
     """Basic test that doesn't require API key"""
     from main import AgentSystem
+    from coding_agent import CodingAgent
+    from ci_agent import CIAgent
+    from planner_agent import PlannerAgent
     
     assert hasattr(AgentSystem, '__init__')
     assert hasattr(AgentSystem, 'process_request')
-    assert hasattr(AgentSystem, '_create_coding_agent')
-    assert hasattr(AgentSystem, '_create_ci_agent')
-    assert hasattr(AgentSystem, '_create_planner_agent')
+    assert hasattr(AgentSystem, 'get_coding_agent')
+    assert hasattr(AgentSystem, 'get_ci_agent')
+    assert hasattr(AgentSystem, 'get_planner_agent')
+    
+    assert hasattr(CodingAgent, '__init__')
+    assert hasattr(CodingAgent, 'process_request')
+    assert hasattr(CIAgent, '__init__')
+    assert hasattr(CIAgent, 'process_request')
+    assert hasattr(PlannerAgent, '__init__')
+    assert hasattr(PlannerAgent, 'process_request')
+    
+    print("✅ Refactored AgentSystem structure is correct")
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
