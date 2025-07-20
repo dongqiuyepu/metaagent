@@ -6,7 +6,7 @@ AI Agent System with Coding, CI, and Planner agents using LangGraph
 import os
 from typing import Dict, Any, List
 from langgraph.prebuilt import create_react_agent
-from langchain_anthropic import ChatAnthropic
+from langchain_openai import ChatOpenAI
 from langchain_core.tools import tool
 from langchain_core.messages import HumanMessage
 import subprocess
@@ -19,13 +19,14 @@ import json
 
 class AgentSystem:
     def __init__(self):
-        api_key = os.getenv("ANTHROPIC_API_KEY")
-        if not api_key:
-            raise ValueError("ANTHROPIC_API_KEY environment variable must be set")
+        api_key = "sk-08769ff2aa534998a0c42fe6c825d7bf"
+        base_url = "https://api.deepseek.com/"
+        model = "deepseek-chat"
         
-        self.llm = ChatAnthropic(
-            model="claude-3-5-sonnet-20241022",
-            api_key=api_key
+        self.llm = ChatOpenAI(
+            model=model,
+            api_key=api_key,
+            base_url=base_url
         )
         
         self.coding_agent = self._create_coding_agent()
@@ -223,11 +224,7 @@ def main():
     print("🤖 AI Agent System Starting...")
     print("=" * 50)
     
-    if not os.getenv("ANTHROPIC_API_KEY"):
-        print("❌ Error: ANTHROPIC_API_KEY environment variable not set")
-        print("Please set your Anthropic API key:")
-        print("export ANTHROPIC_API_KEY='your-api-key-here'")
-        return
+    print("🔧 Using DeepSeek API for LLM functionality")
     
     try:
         agent_system = AgentSystem()
