@@ -9,11 +9,13 @@ from langchain_openai import ChatOpenAI
 from langchain_core.tools import tool
 import subprocess
 import os
+from event_system import EventBus, Event, EventType
 
 
 class CodingAgent:
     def __init__(self, llm: ChatOpenAI):
         self.llm = llm
+        self.event_bus = EventBus()
         self.agent = self._create_agent()
     
     def _create_agent(self):
@@ -100,8 +102,24 @@ class CodingAgent:
     def process_request(self, request: str) -> str:
         """Process a coding request"""
         try:
+            self.event_bus.emit(Event(
+                type=EventType.AGENT_START,
+                data={"request": request},
+                sender="CodingAgent"
+            ))
             from langchain_core.messages import HumanMessage
             response = self.agent.invoke({"messages": [HumanMessage(content=request)]})
-            return response['messages'][-1].content
+            result = response['messages'][-1].content
+            self.event_bus.emit(Event(
+                type=EventType.AGENT_END,
+                data={"request": request, "result": result},
+                sender="CodingAgent"
+            ))
+            return result
         except Exception as e:
+            self.event_bus.emit(Event(
+                type=EventType.ERROR,
+                data={"request": request, "error": str(e)},
+                sender="CodingAgent"
+            ))
             return f"Error processing coding request: {str(e)}"
